@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Complaint — Municipal Grievance System</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .track-container { max-width: 600px; margin: 5rem auto; padding: 0 1rem; }
+    .status-card { margin-top: 2rem; display: none; }
+    #trackMap { height: 200px; border-radius: 8px; margin-top: 1rem; display: none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-icon">🏛️</span>
+        <span>Municipal <span>Grievance</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/citizen/login">Login</a>
+        <a href="/track" class="active">Track Status</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="track-container">
+    <div class="text-center mb-3">
+      <h1>🔎 Track Your Complaint</h1>
+      <p class="text-secondary">Enter your unique complaint ID to see its live status</p>
+    </div>
+
+    <div class="card p-3">
+      <div class="flex gap-2">
+        <input type="text" id="trackId" class="form-control" style="font-family:monospace; font-weight:700" placeholder="GRV-20260311-XXXXXX">
+        <button class="btn btn-primary" onclick="trackComplaint()">Search</button>
+      </div>
+    </div>
+
+    <div id="statusCard" class="card status-card p-3">
+      <div class="flex justify-between items-center mb-1">
+        <h3 id="resId" class="text-accent" style="font-family:monospace">...</h3>
+        <span id="resStatus" class="badge">...</span>
+      </div>
+      <p id="resDesc" style="font-size:0.9rem; margin-bottom:1rem;">...</p>
+      
+      <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.8rem">
+        <div class="p-2 bg-card border rounded">
+          <div class="text-secondary">Category</div>
+          <div id="resCat" class="font-bold">...</div>
+        </div>
+        <div class="p-2 bg-card border rounded">
+          <div class="text-secondary">Department</div>
+          <div id="resDept" class="font-bold">...</div>
+        </div>
+      </div>
+
+      <div id="trackMap"></div>
+    </div>
+
+    <div id="noMatch" class="card p-3 mt-3 text-center text-rejected" style="display:none">
+      No complaint found with that ID. Please check and try again.
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    let map;
+
+    async function trackComplaint() {
+      const id = document.getElementById('trackId').value.trim();
+      if (!id) return;
+
+      document.getElementById('statusCard').style.display = 'none';
+      document.getElementById('noMatch').style.display = 'none';
+
+      try {
+        const res = await fetch(`/api/complaints/${id}`);
+        const data = await res.json();
+        
+        if (!res.ok) throw new Error();
+
+        const c = data.complaint;
+        document.getElementById('resId').textContent = c.complaint_id;
+        document.getElementById('resStatus').textContent = c.status;
+        document.getElementById('resStatus').className = `badge badge-${c.status.toLowerCase().replace(/\s+/g,'')}`;
+        document.getElementById('resDesc').textContent = c.description;
+        document.getElementById('resCat').textContent = c.category;
+        document.getElementById('resDept').textContent = c.department;
+
+        document.getElementById('statusCard').style.display = 'block';
+
+        if (c.lat && c.lng) {
+          document.getElementById('trackMap').style.display = 'block';
+          if (!map) {
+            map = L.map('trackMap').setView([c.lat, c.lng], 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+          } else {
+            map.setView([c.lat, c.lng], 15);
+          }
+          L.marker([c.lat, c.lng]).addTo(map);
+          setTimeout(() => map.invalidateSize(), 200);
+        } else {
+          document.getElementById('trackMap').style.display = 'none';
+        }
+
+      } catch (err) {
+        document.getElementById('noMatch').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

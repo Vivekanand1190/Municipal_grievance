@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Login — Municipal Grievance System</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <style>
+    .auth-container { max-width: 450px; margin: 5rem auto; padding: 0 1rem; }
+    .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+    .tab { padding: 10px 20px; cursor: pointer; color: var(--text-secondary); font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .auth-card { padding: 2.5rem; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .aadhaar-input { letter-spacing: 4px; font-weight: 700; text-align: center; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div style="text-align:center; margin-bottom:2rem;">
+      <h1 style="font-size:1.8rem;">🏛️ Municipal <span>Grievance</span></h1>
+      <p style="color:var(--text-secondary); margin-top:8px;">Citizen Authentication Portal</p>
+    </div>
+
+    <div class="card auth-card">
+      <!-- Dummy inputs to trick browser autofill -->
+      <input type="text" style="display:none" autocomplete="username">
+      <input type="password" style="display:none" autocomplete="current-password">
+      
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">Login</div>
+        <div class="tab" onclick="switchTab('register')">Register</div>
+      </div>
+
+      <!-- Login Panel -->
+      <div id="loginPanel" class="panel active">
+        <form id="loginForm" autocomplete="off">
+          <div class="form-group">
+            <label class="form-label">Aadhaar Number (12 digits)</label>
+            <input type="text" id="loginAadhaar" name="citizen_aadhaar" class="form-control aadhaar-input" maxlength="12" placeholder="XXXX XXXX XXXX" required autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary w-full mt-2">Login</button>
+        </form>
+      </div>
+
+      <!-- Register Panel -->
+      <div id="registerPanel" class="panel">
+        <form id="registerForm" autocomplete="off">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="regName" name="citizen_name" class="form-control" placeholder="e.g. Rajesh Kumar" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Aadhaar Number</label>
+            <input type="text" id="regAadhaar" name="citizen_aadhaar_reg" class="form-control aadhaar-input" maxlength="12" placeholder="XXXX XXXX XXXX" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="regPhone" name="citizen_phone" class="form-control" placeholder="10-digit mobile number" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="regEmail" name="citizen_email" class="form-control" placeholder="your@email.com" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary w-full mt-2">Register & Login</button>
+        </form>
+      </div>
+    </div>
+    
+    <div style="text-align:center; margin-top:2rem;">
+      <a href="/admin/login" style="color:var(--text-secondary); font-size:0.85rem; text-decoration:none;">Go to Administrative Login →</a>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="/shared/auth.js"></script>
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      
+      if (tab === 'login') {
+        document.querySelector('.tab:nth-child(1)').classList.add('active');
+        document.getElementById('loginPanel').classList.add('active');
+      } else {
+        document.querySelector('.tab:nth-child(2)').classList.add('active');
+        document.getElementById('registerPanel').classList.add('active');
+      }
+    }
+
+    // Login Handler
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const aadhaar = document.getElementById('loginAadhaar').value.replace(/\s/g, '');
+      if (aadhaar.length !== 12) return showToast('Aadhaar must be 12 digits', 'error');
+
+      try {
+        const res = await fetch('/api/auth/citizen/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ aadhaar })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        Auth.saveSession(data.token, data.user);
+        showToast('Login successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = '/citizen/portal', 1000);
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    };
+
+    // Register Handler
+    document.getElementById('registerForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const aadhaar = document.getElementById('regAadhaar').value.replace(/\s/g, '');
+      if (aadhaar.length !== 12) return showToast('Aadhaar must be 12 digits', 'error');
+
+      const payload = {
+        aadhaar,
+        name: document.getElementById('regName').value,
+        phone: document.getElementById('regPhone').value,
+        email: document.getElementById('regEmail').value
+      };
+
+      try {
+        const res = await fetch('/api/auth/citizen/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        Auth.saveSession(data.token, data.user);
+        showToast('Registration successful! Welcome.', 'success');
+        setTimeout(() => window.location.href = '/citizen/portal', 1000);
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    };
+
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.className = `toast-${type} show`;
+      toast.innerHTML = `<strong>${type === 'success' ? '✅' : '❌'}</strong> ${msg}`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    // Auto-spacing for Aadhaar input
+    const inputs = document.querySelectorAll('.aadhaar-input');
+    inputs.forEach(input => {
+      input.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.length > 12) val = val.substring(0, 12);
+        e.target.value = val;
+      });
+    });
+  </script>
+</body>
+</html>

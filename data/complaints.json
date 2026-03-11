@@ -1,0 +1,94 @@
+{
+  "complaints": [
+    {
+      "complaint_id": "GRV-20260311-1330FF95",
+      "name": "Rajesh Kumar",
+      "email": "rajesh@test.com",
+      "description": "There is a huge pothole on MG Road near the bus stop causing accidents daily",
+      "location": "MG Road, Ward 12",
+      "category": "Road",
+      "department": "Public Works Department",
+      "departmentEmail": "publicworks@municipality.gov",
+      "confidence": 100,
+      "status": "Pending",
+      "created_at": "2026-03-11T13:51:38.452Z",
+      "updated_at": "2026-03-11T13:51:38.452Z",
+      "emailPreviewUrls": {
+        "department": "https://ethereal.email/message/abFzaks3GqqUPjrDabFzbZSkaEEGa5xtAAAAARwzokVPMSuO7XAsm14ypv4",
+        "citizen": "https://ethereal.email/message/abFzaks3GqqUPjq-abFzbbG7FRPhk7aaAAAAAaTlKJ-qAt.Rkh1QqW73VoU"
+      }
+    },
+    {
+      "complaint_id": "GRV-20260311-F0DB02E5",
+      "name": "Priya Sharma",
+      "email": "priya@test.com",
+      "description": "Water pipe is leaking near Old Market Road, no water supply since 3 days",
+      "location": "Old Market Road",
+      "category": "Water",
+      "department": "Water Supply Department",
+      "departmentEmail": "watersupply@municipality.gov",
+      "confidence": 89,
+      "status": "Pending",
+      "created_at": "2026-03-11T13:51:59.117Z",
+      "updated_at": "2026-03-11T13:51:59.117Z",
+      "emailPreviewUrls": {
+        "department": "https://ethereal.email/message/abFzaks3GqqUPjrDabFzgbG7FRPhk7a.AAAAAnJGiTh95.wkSpjYRw1susY",
+        "citizen": "https://ethereal.email/message/abFzaks3GqqUPjrDabFzgkSUF0htBVYHAAAAA1fyRYFrPij-L8mvcI.4xIw"
+      }
+    },
+    {
+      "complaint_id": "GRV-20260311-7E0D13DE",
+      "name": "Ahmed Khan",
+      "email": "ahmed@test.com",
+      "description": "Power cut since yesterday evening, streetlight broken on sector 5 road",
+      "location": "Sector 5",
+      "category": "Electricity",
+      "department": "Electricity Department",
+      "departmentEmail": "electricity@municipality.gov",
+      "confidence": 71,
+      "status": "Resolved",
+      "created_at": "2026-03-11T13:52:02.387Z",
+      "updated_at": "2026-03-11T13:55:56.731Z",
+      "emailPreviewUrls": {
+        "department": "https://ethereal.email/message/abFzaks3GqqUPjrDabFzhUSUF0htBVYQAAAABdBm-RCXEZpcTTIrXHhihpQ",
+        "citizen": "https://ethereal.email/message/abFzaks3GqqUPjrDabFzhESUF0htBVYNAAAABISFjbjSVzK4qDi88yQJON8"
+      }
+    },
+    {
+      "complaint_id": "GRV-20260311-CC6055FE",
+      "name": "Meera Nair",
+      "email": "meera@test.com",
+      "description": "Garbage not collected for a week, drain is blocked and smells terrible",
+      "location": "Green Colony",
+      "category": "Sanitation",
+      "department": "Sanitation & Waste Management",
+      "departmentEmail": "sanitation@municipality.gov",
+      "confidence": 67,
+      "status": "Rejected",
+      "created_at": "2026-03-11T13:52:05.609Z",
+      "updated_at": "2026-03-11T13:55:50.258Z",
+      "emailPreviewUrls": {
+        "department": "https://ethereal.email/message/abFzaks3GqqUPjrDabFzh8PU1TAFTyk.AAAABhwdn6hGpQZiRYNTDSHdi9w",
+        "citizen": "https://ethereal.email/message/abFzaks3GqqUPjrDabFziJSkaEEGa5yUAAAAB9py0SPax0F4QcI4sZWEJaw"
+      }
+    },
+    {
+      "complaint_id": "GRV-20260311-6C0B1F96",
+      "name": "Sunita Patel",
+      "email": "sunita@demo.com",
+      "description": "The garbage has not been collected from our area for over 10 days. The drains are blocked and there is a terrible smell causing health issues.",
+      "location": "Sector 9, Block B",
+      "category": "Sanitation",
+      "department": "Sanitation & Waste Management",
+      "departmentEmail": "sanitation@municipality.gov",
+      "confidence": 67,
+      "status": "In Progress",
+      "created_at": "2026-03-11T13:54:24.464Z",
+      "updated_at": "2026-03-11T13:55:16.097Z",
+      "emailPreviewUrls": {
+        "department": "https://ethereal.email/message/abFzaks3GqqUPjrDabF0EkSUF0htBVZVAAAACHosDwin1hb9uoLUOJSyaYA",
+        "citizen": "https://ethereal.email/message/abFzaks3GqqUPjrDabF0EpSkaEEGa5zIAAAACcthqDwxYMXgWYWk0lfn8fg"
+      }
+    }
+  ]
+}

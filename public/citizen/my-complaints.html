@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Complaints — Municipal Grievance System</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <style>
+    .history-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .complaint-item { 
+      background: var(--bg-card); border: 1px solid var(--border); 
+      border-radius: var(--radius-sm); padding: 1.5rem; margin-bottom: 1rem;
+      display: flex; gap: 1.5rem; transition: all 0.2s;
+    }
+    .complaint-item:hover { border-color: var(--accent); transform: translateX(5px); }
+    .photo-thumb { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; background: #000; }
+    .complaint-content { flex: 1; }
+    .id-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .timeline { 
+      font-size: 0.75rem; color: var(--text-secondary); 
+      margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/citizen/portal" class="nav-brand">
+        <span class="nav-icon">🏛️</span>
+        <span>Municipal <span>Grievance</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/citizen/portal">File Complaint</a>
+        <a href="/citizen/my-complaints" class="active">My History</a>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="history-container">
+    <div class="mb-3">
+      <h1>📋 My Complaint History</h1>
+      <p class="text-secondary">Track the status of your reported grievances</p>
+    </div>
+
+    <div id="complaintsList">
+      <div class="text-center p-3">Loading your history...</div>
+    </div>
+  </div>
+
+  <script src="/shared/auth.js"></script>
+  <script>
+    Auth.requireAuth('citizen');
+
+    async function loadHistory() {
+      try {
+        const res = await fetch('/api/complaints/mine', {
+          headers: Auth.getAuthHeaders()
+        });
+        const data = await res.json();
+        renderComplaints(data.complaints || []);
+      } catch (err) {
+        document.getElementById('complaintsList').innerHTML = `<div class="card p-3 text-rejected">Error loading history.</div>`;
+      }
+    }
+
+    function renderComplaints(list) {
+      const container = document.getElementById('complaintsList');
+      if (list.length === 0) {
+        container.innerHTML = `<div class="card p-3 text-center">You haven't filed any complaints yet. <a href="/citizen/portal" class="text-accent">File your first one here.</a></div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(c => {
+        const statusKey = c.status.toLowerCase().replace(/\s+/g, '');
+        const date = new Date(c.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+        
+        return `
+          <div class="complaint-item">
+            ${c.photo_url ? `<img src="${c.photo_url}" class="photo-thumb">` : `<div class="photo-thumb" style="display:flex;align-items:center;justify-content:center;color:#444">No Photo</div>`}
+            <div class="complaint-content">
+              <div class="id-row">
+                <span class="font-bold text-accent" style="font-family:monospace">${c.complaint_id}</span>
+                <span class="badge badge-${statusKey}">${c.status}</span>
+              </div>
+              <p style="font-size:0.95rem; margin-bottom:0.5rem;">${c.description}</p>
+              <div class="text-sm text-secondary">
+                <span>📂 ${c.category}</span> &nbsp; | &nbsp; 
+                <span>🏢 ${c.department}</span> &nbsp; | &nbsp;
+                <span>📅 ${date}</span>
+              </div>
+              ${c.timeline ? `
+                <div class="timeline">
+                  <strong>Latest Milestone:</strong> ${c.timeline[c.timeline.length-1].to} on ${new Date(c.timeline[c.timeline.length-1].at).toLocaleDateString()}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    loadHistory();
+  </script>
+</body>
+</html>
