@@ -1,256 +1,398 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Citizen Portal — Municipal Grievance System</title>
-  <link rel="stylesheet" href="/shared/style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <style>
-    .portal-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
-    .portal-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
-    @media (max-width: 850px) { .portal-grid { grid-template-columns: 1fr; } }
-    
-    #map { height: 300px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 1rem; }
-    
-    .upload-area {
-      border: 2px dashed var(--border); border-radius: var(--radius-sm);
-      padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s;
-      background: rgba(255,255,255,0.02);
-    }
-    .upload-area:hover, .upload-area.dragover { border-color: var(--accent); background: rgba(233,69,96,0.05); }
-    .upload-preview { 
-      margin-top: 1rem; display: none; 
-      position: relative; width: 100%; height: 200px;
-      overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    }
-    .upload-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .remove-photo {
-      position: absolute; top: 10px; right: 10px;
-      background: rgba(0,0,0,0.6); color: white; border: none;
-      border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Citizen Portal — Municipal Grievance System</title>
+    <link rel="stylesheet" href="/shared/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <style>
+      .portal-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .portal-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+      }
+      @media (max-width: 850px) {
+        .portal-grid {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .user-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 2rem; padding: 1rem; background: var(--bg-card);
-      border-radius: var(--radius-sm); border: 1px solid var(--border);
-    }
-  </style>
-</head>
-<body>
-  <nav>
-    <div class="nav-inner">
-      <a href="/citizen/portal" class="nav-brand">
-        <span class="nav-icon">🏛️</span>
-        <span>Municipal <span>Grievance</span></span>
-      </a>
-      <div class="nav-links">
-        <a href="/citizen/portal" class="active">File Complaint</a>
-        <a href="/citizen/my-complaints">My History</a>
-        <a href="#" onclick="Auth.logout()">Logout</a>
-      </div>
-    </div>
-  </nav>
+      #map {
+        height: 300px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        margin-top: 1rem;
+      }
 
-  <div class="portal-container">
-    <div class="user-bar">
-      <div>Welcome, <span id="userName" class="text-accent font-bold">...</span></div>
-      <div class="text-secondary text-sm">Citizen Portal</div>
-    </div>
+      .upload-area {
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-sm);
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .upload-area:hover,
+      .upload-area.dragover {
+        border-color: var(--accent);
+        background: rgba(233, 69, 96, 0.05);
+      }
+      .upload-preview {
+        margin-top: 1rem;
+        display: none;
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+      }
+      .upload-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .remove-photo {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+      }
 
-    <!-- Citizen Stats -->
-    <div class="grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1rem; margin-bottom:2rem;">
-      <div class="stat-card" style="padding: 1rem;">
-        <div class="stat-label">My Total</div>
-        <div class="stat-value" id="countTotal" style="font-size:1.5rem">0</div>
-      </div>
-      <div class="stat-card" style="padding: 1rem; border-color:rgba(245,158,11,0.2)">
-        <div class="stat-label">Pending</div>
-        <div class="stat-value" id="countPending" style="font-size:1.5rem; color:var(--status-pending)">0</div>
-      </div>
-      <div class="stat-card" style="padding: 1rem; border-color:rgba(16,185,129,0.2)">
-        <div class="stat-label">Resolved</div>
-        <div class="stat-value" id="countResolved" style="font-size:1.5rem; color:var(--status-resolved)">0</div>
-      </div>
-    </div>
+      .user-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: var(--bg-card);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+      }
+      select.form-control {
+        background: #1a1a2e;
+        color: #ffffff;
+        border: 1px solid #444;
+      }
 
-    <div class="portal-grid">
-      <!-- Left: Form -->
-      <div class="card">
-        <h2 class="mb-3">File a New Complaint</h2>
-        <form id="complaintForm">
-          <div class="form-group">
-            <label class="form-label">Complaint Description</label>
-            <textarea id="description" class="form-control" placeholder="Describe the issue in detail..." required></textarea>
+      select.form-control option {
+        background: #ffffff;
+        color: #000000;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-inner">
+        <a href="/citizen/portal" class="nav-brand">
+          <span class="nav-icon">🏛️</span>
+          <span>Municipal <span>Grievance</span></span>
+        </a>
+        <div class="nav-links">
+          <a href="/citizen/portal" class="active">File Complaint</a>
+          <a href="/citizen/my-complaints">My History</a>
+          <a href="#" onclick="Auth.logout()">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="portal-container">
+      <div class="user-bar">
+        <div>
+          Welcome, <span id="userName" class="text-accent font-bold">...</span>
+        </div>
+        <div class="text-secondary text-sm">Citizen Portal</div>
+      </div>
+
+      <!-- Citizen Stats -->
+      <div
+        class="grid"
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+          margin-bottom: 2rem;
+        "
+      >
+        <div class="stat-card" style="padding: 1rem">
+          <div class="stat-label">My Total</div>
+          <div class="stat-value" id="countTotal" style="font-size: 1.5rem">
+            0
           </div>
-          
-          <div class="form-group">
-            <label class="form-label">Category (AI will auto-improve this)</label>
-            <select id="categoryHint" class="form-control">
-              <option value="">Auto-detect category</option>
-              <option value="Road">Road</option>
-              <option value="Water">Water</option>
-              <option value="Electricity">Electricity</option>
-              <option value="Sanitation">Sanitation</option>
-            </select>
+        </div>
+        <div
+          class="stat-card"
+          style="padding: 1rem; border-color: rgba(245, 158, 11, 0.2)"
+        >
+          <div class="stat-label">Pending</div>
+          <div
+            class="stat-value"
+            id="countPending"
+            style="font-size: 1.5rem; color: var(--status-pending)"
+          >
+            0
           </div>
+        </div>
+        <div
+          class="stat-card"
+          style="padding: 1rem; border-color: rgba(16, 185, 129, 0.2)"
+        >
+          <div class="stat-label">Resolved</div>
+          <div
+            class="stat-value"
+            id="countResolved"
+            style="font-size: 1.5rem; color: var(--status-resolved)"
+          >
+            0
+          </div>
+        </div>
+      </div>
 
-          <div class="form-group">
-            <label class="form-label">Attach Photo (AI identifies location via GPS if available)</label>
-            <div class="upload-area" id="dropZone">
-              <span id="uploadHint">📸 Click or Drag Photo Here<br><small>Supports JPG, PNG, WEBP (Max 5MB)</small></span>
-              <div class="upload-preview" id="previewBox">
-                <img id="previewImg" src="">
-                <button type="button" class="remove-photo" onclick="clearPhoto(event)">✕</button>
-              </div>
+      <div class="portal-grid">
+        <!-- Left: Form -->
+        <div class="card">
+          <h2 class="mb-3">File a New Complaint</h2>
+          <form id="complaintForm">
+            <div class="form-group">
+              <label class="form-label">Complaint Description</label>
+              <textarea
+                id="description"
+                class="form-control"
+                placeholder="Describe the issue in detail..."
+                required
+              ></textarea>
             </div>
-            <input type="file" id="photoInput" accept="image/*" style="display:none">
+
+            <div class="form-group">
+              <label class="form-label"
+                >Category (AI will auto-improve this)</label
+              >
+              <select id="categoryHint" class="form-control">
+                <option value="">Auto-detect category</option>
+                <option value="Road">Road</option>
+                <option value="Water">Water</option>
+                <option value="Electricity">Electricity</option>
+                <option value="Sanitation">Sanitation</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"
+                >Attach Photo (AI identifies location via GPS if
+                available)</label
+              >
+              <div class="upload-area" id="dropZone">
+                <span id="uploadHint"
+                  >📸 Click or Drag Photo Here<br /><small
+                    >Supports JPG, PNG, WEBP (Max 5MB)</small
+                  ></span
+                >
+                <div class="upload-preview" id="previewBox">
+                  <img id="previewImg" src="" />
+                  <button
+                    type="button"
+                    class="remove-photo"
+                    onclick="clearPhoto(event)"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <input
+                type="file"
+                id="photoInput"
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full" id="submitBtn">
+              Submit Grievance
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Location -->
+        <div class="card">
+          <h3 style="font-size: 1.1rem">📍 Location Details</h3>
+          <p class="text-secondary text-sm mt-1">
+            If your photo has GPS tags, the pin will move automatically. You can
+            also drag the pin or click the map manually.
+          </p>
+
+          <div id="map"></div>
+          <input type="hidden" id="lat" />
+          <input type="hidden" id="lng" />
+
+          <div class="form-group mt-3">
+            <label class="form-label">Landmark / Address (Optional)</label>
+            <input
+              type="text"
+              id="locationText"
+              class="form-control"
+              placeholder="e.g. Near Metro Pillar 45"
+            />
           </div>
-
-          <button type="submit" class="btn btn-primary w-full" id="submitBtn">Submit Grievance</button>
-        </form>
-      </div>
-
-      <!-- Right: Location -->
-      <div class="card">
-        <h3 style="font-size:1.1rem">📍 Location Details</h3>
-        <p class="text-secondary text-sm mt-1">If your photo has GPS tags, the pin will move automatically. You can also drag the pin or click the map manually.</p>
-        
-        <div id="map"></div>
-        <input type="hidden" id="lat">
-        <input type="hidden" id="lng">
-        
-        <div class="form-group mt-3">
-          <label class="form-label">Landmark / Address (Optional)</label>
-          <input type="text" id="locationText" class="form-control" placeholder="e.g. Near Metro Pillar 45">
         </div>
       </div>
     </div>
-  </div>
 
-  <div id="toast"></div>
+    <div id="toast"></div>
 
-  <script src="/shared/auth.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    Auth.requireAuth('citizen');
-    document.getElementById('userName').textContent = Auth.getUser().name;
+    <script src="/shared/auth.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      Auth.requireAuth("citizen");
+      document.getElementById("userName").textContent = Auth.getUser().name;
 
-    let map, marker;
-    const defaultCoords = [28.6139, 77.2090]; // Delhi
+      let map, marker;
+      const defaultCoords = [28.6139, 77.209]; // Delhi
 
-    function initMap() {
-      map = L.map('map').setView(defaultCoords, 13);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
+      function initMap() {
+        map = L.map("map").setView(defaultCoords, 13);
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+          {
+            attribution: "&copy; OpenStreetMap contributors",
+          },
+        ).addTo(map);
 
-      marker = L.marker(defaultCoords, { draggable: true }).addTo(map);
-      
-      marker.on('dragend', function() {
-        const pos = marker.getLatLng();
-        updateCoords(pos.lat, pos.lng);
-      });
+        marker = L.marker(defaultCoords, { draggable: true }).addTo(map);
 
-      map.on('click', function(e) {
-        marker.setLatLng(e.latlng);
-        updateCoords(e.latlng.lat, e.latlng.lng);
-      });
-    }
-
-    function updateCoords(lat, lng) {
-      document.getElementById('lat').value = lat;
-      document.getElementById('lng').value = lng;
-    }
-
-    // Photo Handling
-    const dropZone = document.getElementById('dropZone');
-    const photoInput = document.getElementById('photoInput');
-    const previewBox = document.getElementById('previewBox');
-    const previewImg = document.getElementById('previewImg');
-    const uploadHint = document.getElementById('uploadHint');
-
-    dropZone.onclick = () => photoInput.click();
-
-    photoInput.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) handleFile(file);
-    };
-
-    function handleFile(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewBox.style.display = 'block';
-        uploadHint.style.display = 'none';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function clearPhoto(e) {
-      e.stopPropagation();
-      photoInput.value = '';
-      previewBox.style.display = 'none';
-      uploadHint.style.display = 'block';
-    }
-
-    // Form Submission
-    document.getElementById('complaintForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
-
-      const formData = new FormData();
-      formData.append('description', document.getElementById('description').value);
-      formData.append('location', document.getElementById('locationText').value);
-      formData.append('lat', document.getElementById('lat').value);
-      formData.append('lng', document.getElementById('lng').value);
-      
-      if (photoInput.files[0]) {
-        formData.append('photo', photoInput.files[0]);
-      }
-
-      try {
-        const res = await fetch('/api/complaints', {
-          method: 'POST',
-          headers: Auth.getAuthHeaders(),
-          body: formData
+        marker.on("dragend", function () {
+          const pos = marker.getLatLng();
+          updateCoords(pos.lat, pos.lng);
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
 
-        showToast('Grievance filed successfully!', 'success');
-        setTimeout(() => window.location.href = '/citizen/my-complaints', 1500);
-      } catch (err) {
-        showToast(err.message, 'error');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Grievance';
+        map.on("click", function (e) {
+          marker.setLatLng(e.latlng);
+          updateCoords(e.latlng.lat, e.latlng.lng);
+        });
       }
-    };
 
-    function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toast');
-      toast.className = `toast-${type} show`;
-      toast.innerHTML = `<strong>${type === 'success' ? '✅' : '❌'}</strong> ${msg}`;
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
+      function updateCoords(lat, lng) {
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
+      }
 
-    async function loadUserStats() {
-      try {
-        const res = await fetch('/api/complaints/mine', { headers: Auth.getAuthHeaders() });
-        const data = await res.json();
-        const list = data.complaints || [];
-        document.getElementById('countTotal').textContent = list.length;
-        document.getElementById('countPending').textContent = list.filter(c => c.status === 'Pending').length;
-        document.getElementById('countResolved').textContent = list.filter(c => c.status === 'Resolved').length;
-      } catch (err) {}
-    }
+      // Photo Handling
+      const dropZone = document.getElementById("dropZone");
+      const photoInput = document.getElementById("photoInput");
+      const previewBox = document.getElementById("previewBox");
+      const previewImg = document.getElementById("previewImg");
+      const uploadHint = document.getElementById("uploadHint");
 
-    initMap();
-    loadUserStats();
-    updateCoords(defaultCoords[0], defaultCoords[1]);
-  </script>
-</body>
+      dropZone.onclick = () => photoInput.click();
+
+      photoInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) handleFile(file);
+      };
+
+      function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          previewBox.style.display = "block";
+          uploadHint.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearPhoto(e) {
+        e.stopPropagation();
+        photoInput.value = "";
+        previewBox.style.display = "none";
+        uploadHint.style.display = "block";
+      }
+
+      // Form Submission
+      document.getElementById("complaintForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting...";
+
+        const formData = new FormData();
+        formData.append(
+          "description",
+          document.getElementById("description").value,
+        );
+        formData.append(
+          "location",
+          document.getElementById("locationText").value,
+        );
+        formData.append("lat", document.getElementById("lat").value);
+        formData.append("lng", document.getElementById("lng").value);
+
+        if (photoInput.files[0]) {
+          formData.append("photo", photoInput.files[0]);
+        }
+
+        try {
+          const res = await fetch("/api/complaints", {
+            method: "POST",
+            headers: Auth.getAuthHeaders(),
+            body: formData,
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+
+          showToast("Grievance filed successfully!", "success");
+          setTimeout(
+            () => (window.location.href = "/citizen/my-complaints"),
+            1500,
+          );
+        } catch (err) {
+          showToast(err.message, "error");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Grievance";
+        }
+      };
+
+      function showToast(msg, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.className = `toast-${type} show`;
+        toast.innerHTML = `<strong>${type === "success" ? "✅" : "❌"}</strong> ${msg}`;
+        setTimeout(() => toast.classList.remove("show"), 3000);
+      }
+
+      async function loadUserStats() {
+        try {
+          const res = await fetch("/api/complaints/mine", {
+            headers: Auth.getAuthHeaders(),
+          });
+          const data = await res.json();
+          const list = data.complaints || [];
+          document.getElementById("countTotal").textContent = list.length;
+          document.getElementById("countPending").textContent = list.filter(
+            (c) => c.status === "Pending",
+          ).length;
+          document.getElementById("countResolved").textContent = list.filter(
+            (c) => c.status === "Resolved",
+          ).length;
+        } catch (err) {}
+      }
+
+      initMap();
+      loadUserStats();
+      updateCoords(defaultCoords[0], defaultCoords[1]);
+    </script>
+  </body>
 </html>
