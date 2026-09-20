@@ -1,0 +1,218 @@
+{
+  "citizens": [
+    {
+      "id": "CIT-1773238094692",
+      "aadhaar_hash": "112233445566",
+      "name": "Aman Gupta",
+      "phone": "9876543210",
+      "email": "aman@demo.com",
+      "created_at": "2026-03-11T14:08:14.692Z"
+    },
+    {
+      "id": "CIT-1773243049297",
+      "aadhaar_hash": "123123131313",
+      "name": "chaitanya",
+      "phone": "0000000000",
+      "email": "test@test.com",
+      "created_at": "2026-03-11T15:30:49.297Z"
+    },
+    {
+      "id": "CIT-1773247646905",
+      "aadhaar_hash": "111111111111",
+      "name": "chaitanya",
+      "phone": "0000000000",
+      "email": "test@test.com",
+      "created_at": "2026-03-11T16:47:26.905Z"
+    },
+    {
+      "id": "CIT-1773250043153",
+      "aadhaar_hash": "000000000000",
+      "name": "chaianya",
+      "phone": "0000000000",
+      "email": "test@test.com",
+      "created_at": "2026-03-11T17:27:23.153Z"
+    }
+  ],
+  "admins": [
+    {
+      "id": "ADM-001",
+      "email": "admin@fixmycity.gov",
+      "password_hash": "$2b$10$IIh7u8E3X6OyOYBLIH3eLuNtL/.at3CsRuMNVm6.Cj4dcleJ/WEgO",
+      "name": "System Administrator",
+      "role": "admin",
+      "created_at": "2026-03-11T14:07:11.041Z"
+    }
+  ],
+  "complaints": [
+    {
+      "complaint_id": "GRV-20260311-B73BF1C7",
+      "citizen_id": "CIT-1773238094692",
+      "name": "Aman Gupta",
+      "description": "There is a broken streetlight sparking on the main road, very dangerous.",
+      "location": "Sector 14 Cross",
+      "category": "Electricity",
+      "department": "Electricity Department",
+      "departmentEmail": "electricity@municipality.gov",
+      "status": "Resolved",
+      "priority": "High",
+      "lat": 28.619532313874394,
+      "lng": 77.20847139485485,
+      "photo_url": null,
+      "created_at": "2026-03-11T14:09:11.701Z",
+      "updated_at": "2026-03-11T18:16:16.103Z",
+      "timeline": [
+        {
+          "from": null,
+          "to": "Pending",
+          "changed_by": "citizen",
+          "at": "2026-03-11T14:09:11.701Z"
+        },
+        {
+          "from": "Pending",
+          "to": "Rejected",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T16:49:50.982Z"
+        },
+        {
+          "from": "Rejected",
+          "to": "Resolved",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T16:50:00.509Z"
+        },
+        {
+          "from": "Resolved",
+          "to": "Rejected",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T18:16:13.129Z"
+        },
+        {
+          "from": "Rejected",
+          "to": "Resolved",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T18:16:16.104Z"
+        }
+      ]
+    },
+    {
+      "complaint_id": "GRV-20260311-45CA0C8E",
+      "citizen_id": "CIT-1773247646905",
+      "name": "chaitanya",
+      "description": "asdfghjkl",
+      "location": "",
+      "category": "General",
+      "department": "Municipal Office (General)",
+      "departmentEmail": "general@municipality.gov",
+      "status": "In Progress",
+      "priority": "Normal",
+      "lat": 28.6139,
+      "lng": 77.209,
+      "photo_url": "/uploads/82c9f5e6-eb1a-4854-ba6d-45e023f5f281.jpg",
+      "created_at": "2026-03-11T16:47:47.635Z",
+      "updated_at": "2026-03-11T18:16:19.190Z",
+      "timeline": [
+        {
+          "from": null,
+          "to": "Pending",
+          "changed_by": "citizen",
+          "at": "2026-03-11T16:47:47.635Z"
+        },
+        {
+          "from": "Pending",
+          "to": "Rejected",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T16:48:13.192Z"
+        },
+        {
+          "from": "Rejected",
+          "to": "Pending",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T16:48:16.481Z"
+        },
+        {
+          "from": "Pending",
+          "to": "In Progress",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T18:16:19.190Z"
+        }
+      ]
+    },
+    {
+      "complaint_id": "GRV-20260311-355B54A9",
+      "citizen_id": "CIT-1773250043153",
+      "name": "chaianya",
+      "description": "asdfhl",
+      "location": "",
+      "category": "General",
+      "department": "FixMyCity Office (General)",
+      "departmentEmail": "general@FixMyCity.gov",
+      "status": "In Progress",
+      "priority": "Normal",
+      "lat": 28.6139,
+      "lng": 77.209,
+      "photo_url": "/uploads/3a8de926-a107-4e2e-8b79-cd5f129b9007.jpg",
+      "created_at": "2026-03-11T17:27:45.312Z",
+      "updated_at": "2026-03-11T18:16:21.430Z",
+      "timeline": [
+        {
+          "from": null,
+          "to": "Pending",
+          "changed_by": "citizen",
+          "at": "2026-03-11T17:27:45.312Z"
+        },
+        {
+          "from": "Pending",
+          "to": "Rejected",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T17:31:44.614Z"
+        },
+        {
+          "from": "Rejected",
+          "to": "In Progress",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T18:16:21.431Z"
+        }
+      ]
+    },
+    {
+      "complaint_id": "GRV-20260311-8938F7C7",
+      "citizen_id": "CIT-1773250043153",
+      "name": "chaianya",
+      "description": "adhjgfjfghgh",
+      "location": "",
+      "category": "General",
+      "department": "FixMyCity Office (General)",
+      "departmentEmail": "general@FixMyCity.gov",
+      "status": "Resolved",
+      "priority": "Normal",
+      "lat": 28.6139,
+      "lng": 77.209,
+      "photo_url": "/uploads/61753455-3167-4e94-8b58-12ad312ea817.jpg",
+      "created_at": "2026-03-11T18:01:15.765Z",
+      "updated_at": "2026-03-11T18:03:05.221Z",
+      "timeline": [
+        {
+          "from": null,
+          "to": "Pending",
+          "changed_by": "citizen",
+          "at": "2026-03-11T18:01:15.765Z"
+        },
+        {
+          "from": "Pending",
+          "to": "In Progress",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T18:02:01.018Z"
+        },
+        {
+          "from": "In Progress",
+          "to": "Resolved",
+          "changed_by": "System Administrator",
+          "at": "2026-03-11T18:03:05.221Z"
+        }
+      ],
+      "parent_id": "GRV-20260311-45CA0C8E",
+      "rating": 5,
+      "feedback_comment": "dandknasdva",
+      "feedback_at": "2026-03-11T18:03:26.698Z"
+    }
+  ]
+}

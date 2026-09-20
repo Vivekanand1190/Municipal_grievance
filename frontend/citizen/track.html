@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Complaint — FixMyCity</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="track.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+<span class="nav-icon">
+  <img src="/pho/logo.jpeg" alt="FixMyCity Logo" style="width:40px;height:40px;object-fit:contain;">
+</span>        <span> <span>FixMyCity</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/citizen/login">Login</a>
+        <a href="/track" class="active">Track Status</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="track-container">
+    <div class="text-center mb-3">
+      <h1>Track Your Complaint</h1>
+      <p class="text-secondary">Enter your unique complaint ID to see its live status</p>
+    </div>
+
+    <div class="card p-3">
+      <div class="flex gap-2">
+        <input type="text" id="trackId" class="form-control" style="font-family:monospace; font-weight:700" placeholder="GRV-20260311-XXXXXX">
+        <button class="btn btn-primary" onclick="trackComplaint()">Search</button>
+      </div>
+    </div>
+
+    <div id="statusCard" class="card status-card p-3">
+      <div class="flex justify-between items-center mb-1">
+        <h3 id="resId" class="text-accent" style="font-family:monospace">...</h3>
+        <span id="resStatus" class="badge">...</span>
+      </div>
+      <p id="resDesc" style="font-size:0.9rem; margin-bottom:1rem;">...</p>
+      
+      <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.8rem">
+        <div class="p-2 bg-card border rounded">
+          <div class="text-secondary">Category</div>
+          <div id="resCat" class="font-bold">...</div>
+        </div>
+        <div class="p-2 bg-card border rounded">
+          <div class="text-secondary">Department</div>
+          <div id="resDept" class="font-bold">...</div>
+        </div>
+      </div>
+
+      <div id="trackMap"></div>
+    </div>
+
+    <div id="noMatch" class="card p-3 mt-3 text-center text-rejected" style="display:none">
+      No complaint found with that ID. Please check and try again.
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="track.js"></script>
+</body>
+</html>

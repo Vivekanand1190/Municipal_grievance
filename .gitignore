@@ -1,4 +1,4 @@
 node_modules/
 server/uploads/
-data/*.json
+
 .env

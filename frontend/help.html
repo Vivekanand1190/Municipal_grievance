@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Support — FixMyCity</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <style>
+    .help-container { max-width: 900px; margin: 3rem auto; padding: 0 1.5rem; }
+    .help-header { text-align: center; margin-bottom: 3rem; }
+    .help-header h1 { font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; }
+    .help-header p { color: var(--text-secondary); font-size: 1.1rem; }
+    
+    .faq-section { margin-bottom: 3rem; }
+    .faq-item { background: white; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-question { font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; }
+    .faq-answer { color: var(--text-secondary); line-height: 1.6; }
+    
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+    .contact-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; text-align: center; }
+    .contact-card i { font-size: 2rem; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .contact-card h3 { margin-bottom: 1rem; }
+    
+    .back-home { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+    .back-home:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-icon"><img src="/pho/logo.jpeg" alt="FixMyCity Logo" style="width:40px;height:40px;object-fit:contain;"></span>
+        <span>FixMyCity</span>
+      </a>
+      <div class="nav-links"><a href="/">Home</a></div>
+    </div>
+  </nav>
+
+  <div class="help-container">
+    <a href="/" class="back-home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to Home
+    </a>
+
+    <div class="help-header">
+      <h1>How can we help?</h1>
+      <p>Find answers to common questions about using the FixMyCity platform.</p>
+    </div>
+
+    <div class="faq-section">
+      <div class="faq-item">
+        <div class="faq-question">How do I file a new complaint?</div>
+        <div class="faq-answer">Log in to the Citizen Portal using your Aadhaar and Phone number. Click on the "File Complaint" tab, upload a photo of the issue, select the category, and provide a brief description. Your GPS location will be automatically captured from the photo metadata.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">What is "Duplicate Detection"?</div>
+        <div class="faq-answer">Our system automatically checks if a similar issue has already been reported nearby. If a match is found, you can "Support" the existing report instead of creating a new one. This helps the government prioritize issues with higher community support.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">How long does it take to resolve an issue?</div>
+        <div class="faq-answer">Resolution times vary depending on the complexity of the issue and the department's workload. You can track the real-time status (Pending, In Progress, Resolved) through your "History" tab.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">What if my issue is rejected?</div>
+        <div class="faq-answer">If an issue is rejected, a reason will be provided by the department officer. Common reasons include "Out of Jurisdiction" or "Insufficient Information." You can resubmit with more details if necessary.</div>
+      </div>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>Technical Support</h3>
+        <p>Experiencing technical glitches?</p>
+        <a href="mailto:support@fixmycity.gov.in" class="text-accent">support@fixmycity.gov.in</a>
+      </div>
+      <div class="contact-card">
+        <h3>Grievance Officer</h3>
+        <p>Questions about a specific case?</p>
+        <a href="mailto:officer@fixmycity.gov.in" class="text-accent">officer@fixmycity.gov.in</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer" style="padding: 2rem; border-top: 1px solid var(--border); background: white; margin-top: 4rem; text-align: center;">
+    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+      &copy; 2026 FixMyCity. Official Government Service Portal.
+    </div>
+  </footer>
+</body>
+</html>

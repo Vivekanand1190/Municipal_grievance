@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — FixMyCity System</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/admin/dashboard" class="nav-brand">
+        <span class="nav-icon"><span class="nav-icon">
+  <img src="/pho/logo.jpeg" alt="FixMyCity Logo" style="width:40px;height:40px;object-fit:contain;">
+</span></span>
+        <span>FixMyCity <span>Admin</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/admin/dashboard" class="active">List View</a>
+        <a href="/admin/map">Map View</a>
+        <a href="/admin/analytics">Analytics</a>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end">
+      <div>
+        <h1> FixMyCity Dashboard</h1>
+        <p class="text-secondary">System Statistics and Grievance Management</p>
+      </div>
+      <div class="text-secondary text-sm">Welcome, <span id="adminName" class="text-accent font-bold">...</span></div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.5rem; margin-top:2rem;">
+      <div class="stat-card">
+        <div class="stat-label">Total Grievances</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Citizens Registered</div>
+        <div class="stat-value" id="statCitizens">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending Issues</div>
+        <div class="stat-value" id="statPending" style="color:var(--status-pending)">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Resolution Time</div>
+        <div class="stat-value" id="statAvgTime" style="color:var(--status-resolved)">0 <span style="font-size:0.8rem">Days</span></div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card table-card">
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+        <select id="filterStatus" class="form-control" style="width:150px" onchange="loadComplaints()">
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <select id="filterCategory" class="form-control" style="width:180px" onchange="loadComplaints()">
+          <option value="">All Categories</option>
+          <option value="Road & Infrastructure Department">Road & Infrastructure</option>
+          <option value="Water Supply Department">Water Supply</option>
+          <option value="Electricity Department">Electricity</option>
+          <option value="Sanitation & Waste Management">Sanitation & Waste</option>
+          <option value="Public Health Department">Public Health</option>
+          <option value="Transport Department">Transport</option>
+          <option value="Municipal Services">Municipal Services</option>
+        </select>
+        <select id="filterPriority" class="form-control" style="width:130px" onchange="loadComplaints()">
+           <option value="">All Priority</option>
+           <option value="High">High</option>
+           <option value="Normal">Normal</option>
+        </select>
+        <div style="display:flex; align-items:center; gap:5px">
+           <span class="text-xs text-secondary">From:</span>
+           <input type="date" id="filterStart" class="form-control" style="width:140px" onchange="loadComplaints()">
+        </div>
+        <div style="display:flex; align-items:center; gap:5px">
+           <span class="text-xs text-secondary">To:</span>
+           <input type="date" id="filterEnd" class="form-control" style="width:140px" onchange="loadComplaints()">
+        </div>
+        <input type="text" id="adminSearch" class="form-control" style="flex:1; min-width:200px" placeholder="Search ID or description..." oninput="loadComplaints()">
+      </div>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Photo</th>
+              <th>Details</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="complaintsBody">
+            <!-- Data here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Details Modal -->
+  <div id="detailsModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 style="margin:0">Complaint Details <span id="modalId" class="text-accent" style="font-family:monospace; margin-left:10px"></span></h2>
+        <button class="close-btn" onclick="closeModal()">X</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div style="position:relative">
+            <img id="modalPhoto" src="" class="modal-photo" style="display:none">
+            <a id="modalDownloadBtn" href="" download class="btn btn-secondary" style="position:absolute; bottom:10px; right:10px; padding:4px 8px; font-size:0.7rem; background:rgba(0,0,0,0.6); border:none; display:none">Download</a>
+          </div>
+          <div class="detail-section" style="margin-top:1.5rem">
+            <div class="detail-label"> Description</div>
+            <div id="modalDesc" class="detail-value" style="font-size:0.95rem; line-height:1.5"></div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Location</div>
+            <div id="modalLoc" class="detail-value"></div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Timeline</div>
+            <div id="modalTimeline" style="font-size:0.8rem; color:var(--text-secondary); max-height:150px; overflow-y:auto; border-left:2px solid var(--border); padding-left:1rem; margin-top:8px">
+              <!-- Timeline items -->
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem">
+            <div class="detail-section">
+              <div class="detail-label">Citizen Name</div>
+              <div id="modalCitizen" class="detail-value font-bold"></div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label"> Category</div>
+              <div id="modalCat" class="detail-value"></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label"> Aadhaar Number</div>
+            <div id="modalAadhaar" class="detail-value font-bold text-accent" style="letter-spacing:1px"></div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem">
+            <div class="detail-section">
+              <div class="detail-label">Phone</div>
+              <div id="modalPhone" class="detail-value"></div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label"> Email</div>
+              <div id="modalEmail" class="detail-value"></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Department</div>
+            <div id="modalDept" class="detail-value"></div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Status</div>
+            <div id="modalStatus" class="detail-value"></div>
+          </div>
+
+          <div class="assignment-section" style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border)">
+            <h3 style="font-size:1rem; margin-bottom:1rem"><i class="fas fa-user-plus"></i> Assign Responsibility</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem">
+              <div class="form-group">
+                <label class="form-label">Assign To Staff</label>
+                <select id="modalAssignee" class="form-control">
+                  <option value="Unassigned">Unassigned</option>
+                  <option value="Road Dept Officer">Road Dept Officer</option>
+                  <option value="Water Dept Officer">Water Dept Officer</option>
+                  <option value="Electric Dept Officer">Electric Dept Officer</option>
+                  <option value="Sanitation Officer">Sanitation Officer</option>
+                  <option value="Health Dept Officer">Health Dept Officer</option>
+                  <option value="Transport Officer">Transport Officer</option>
+                  <option value="General Services Officer">General Services Officer</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Set Deadline</label>
+                <input type="date" id="modalDeadline" class="form-control">
+              </div>
+            </div>
+            <button id="saveAssignmentBtn" class="btn btn-primary w-full mt-2" style="background:var(--accent)">Send to Officers</button>
+          </div>
+
+          <div id="modalFeedbackSection" class="detail-section" style="display:none; margin-top:1rem; padding:10px; background:rgba(245,158,11,0.1); border-radius:8px; border:1px solid rgba(245,158,11,0.2)">
+            <div class="detail-label" style="color:#f59e0b">Citizen Feedback</div>
+            <div id="modalRating" class="detail-value font-bold" style="color:#f59e0b; font-size:1.1rem"></div>
+            <div id="modalFeedbackComment" class="detail-value" style="font-style:italic; margin-top:4px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <button id="modalResolveBtn" class="btn btn-primary" style="background:#10b981; border-color:#10b981">Mark Resolved</button>
+        <button id="modalRejectBtn" class="btn btn-primary" style="background:#ef4444; border-color:#ef4444">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/shared/auth.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

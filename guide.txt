@@ -1,0 +1,70 @@
+========================================================================
+             MUNICIPAL GRIEVANCE PLATFORM - SETUP GUIDE
+========================================================================
+
+Follow these steps to run the FixMyCity Municipal Grievance Platform locally.
+
+1. PREREQUISITES
+----------------
+Make sure you have the following installed:
+- Node.js (v18 or higher)
+- MongoDB (Atlas account or local installation)
+- Python 3.x (with Matplotlib and NumPy for Analytics)
+
+2. ENVIRONMENT SETUP
+--------------------
+Create a file named `.env` in the /backend folder (already provided) with:
+- PORT=3000
+- MONGO_URI=your_mongodb_atlas_connection_string
+- JWT_SECRET=your_secret_key
+
+3. INSTALLATION
+---------------
+Open your terminal in the /backend directory and run:
+> npm install
+
+4. START THE WEBSITE
+--------------------
+In the /backend directory, run:
+> npm start
+
+The server will start at: http://localhost:3000
+
+5. KEY URLS
+-----------
+- Home Page:        http://localhost:3000/
+- Citizen Login:    http://localhost:3000/citizen/login
+- Citizen Portal:   http://localhost:3000/citizen/portal
+- Admin Login:      http://localhost:3000/admin/login
+- Admin Dashboard:  http://localhost:3000/admin/dashboard
+- Analytics:        http://localhost:3000/admin/analytics
+
+6. DEFAULT ACCOUNTS (Admin & Officers)
+--------------------------------------
+All accounts use the password: Fix@1234
+
+- Super Admin:           admin@fixmycity.gov
+- Road Dept Officer:     road@municipality.gov
+- Water Dept Officer:    water@municipality.gov
+- Electricity Officer:   electric@municipality.gov
+- Sanitation Officer:    sanitation@municipality.gov
+- Health Dept Officer:   health@municipality.gov
+- Transport Officer:     transport@municipality.gov
+- Municipal Services:    municipal@municipality.gov
+
+7. ANALYTICS (Python)
+---------------------
+To ensure Python charts work, run this command in your terminal:
+> pip install matplotlib numpy
+
+8. FEATURES
+-----------
+- AI classification of complaints.
+- Automated department routing.
+- Real-time mapping with GPS extraction from photos.
+- Advanced Admin management (Assign staff, Set deadlines).
+- High-quality Python (Matplotlib) analytics charts.
+
+========================================================================
+                     FixMyCity — Improving Urban Life
+========================================================================

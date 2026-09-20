@@ -1,0 +1,77 @@
+FixMyCity - Technology Stack & Usage Guide
+
+This document explains the technologies used to build the FixMyCity municipal grievance platform, why they were chosen, and their specific roles in the application.
+
+=========================================
+FRONTEND TECHNOLOGIES
+=========================================
+
+1. HTML5 & CSS3
+   - Why: Standard technologies for building web structures and styling.
+   - Use: Provides the layout for all pages (Citizen Portal, Admin Dashboard, Map) and ensures a responsive, premium look using modern CSS features like Grid, Flexbox, and CSS Variables.
+
+2. Vanilla JavaScript (ES6+)
+   - Why: Lightweight and fast, avoiding the overhead of heavy frameworks like React for this specific project.
+   - Use: Handles all frontend logic, including API calls (fetch), form submissions, dynamic UI updates, and local storage management.
+
+3. Leaflet.js
+   - Why: An industry-standard open-source library for interactive maps.
+   - Use: Powers the "Public Reports Map" where citizens can see geolocated complaints across the city in real-time.
+
+4. Google Fonts (Inter & Outfit)
+   - Why: Clean, professional typography.
+   - Use: Ensures the application feels like a modern, official government portal.
+
+=========================================
+BACKEND TECHNOLOGIES
+=========================================
+
+1. Node.js & Express.js
+   - Why: Fast, scalable, and allows using JavaScript for both frontend and backend (Fullstack JS).
+   - Use: The backbone of the server. It manages API routes, handles user requests, and coordinates between the database and the frontend.
+
+2. MongoDB & Mongoose
+   - Why: A flexible, NoSQL database that is great for storing varied data like complaint descriptions and status logs.
+   - Use: Stores all data including User profiles, Complaints, Admin accounts, and Support counts.
+
+3. Python (Matplotlib/Seaborn)
+   - Why: Powerful for data processing and visualization.
+   - Use: Specifically used for "generate_charts.py" to create complex analytics charts for the Admin Dashboard (e.g., department performance, monthly trends).
+
+4. Nodemailer
+   - Why: Reliable library for sending emails.
+   - Use: Sends confirmation emails to citizens when they file a complaint and updates them when the status changes.
+
+5. Multer
+   - Why: The standard middleware for handling file uploads in Node.js.
+   - Use: Processes the photos uploaded by citizens as evidence for their grievances.
+
+6. Exifr
+   - Why: Efficient at reading image metadata.
+   - Use: Automatically extracts GPS coordinates (latitude/longitude) from uploaded photos so the system knows exactly where the problem is located.
+
+7. Bcryptjs
+   - Why: Industry-standard security for passwords.
+   - Use: Hashes (encrypts) user passwords before storing them in the database to ensure security.
+
+8. JSON Web Tokens (JWT)
+   - Why: Secure and stateless way to handle authentication.
+   - Use: Keeps users logged in and ensures that only authorized admins can access sensitive dashboard data.
+
+9. Dotenv
+   - Why: Security best practice.
+   - Use: Keeps sensitive information (like database URIs and email passwords) in a separate .env file, hidden from the main code.
+
+10. CORS (Cross-Origin Resource Sharing)
+    - Why: Required for web security.
+    - Use: Allows the frontend and backend to communicate safely even if they are hosted on different domains.
+
+=========================================
+DEVELOPMENT TOOLS
+=========================================
+
+1. npm (Node Package Manager)
+   - Use: Manages all the external libraries and dependencies used in the project.
+
+2. Git
+   - Use: Tracks changes in the code and manages different versions of the project.

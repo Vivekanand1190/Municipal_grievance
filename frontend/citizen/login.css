@@ -1,0 +1,9 @@
+.auth-container { max-width: 450px; margin: 5rem auto; padding: 0 1rem; }
+.tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+.tab { padding: 10px 20px; cursor: pointer; color: var(--text-secondary); font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.auth-card { padding: 2.5rem; }
+.panel { display: none; }
+.panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.aadhaar-input { letter-spacing: 4px; font-weight: 700; text-align: center; font-size: 1.2rem; }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Complaints — FixMyCity</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="my-complaints.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/citizen/portal" class="nav-brand">
+<span class="nav-icon">
+  <img src="/pho/logo.jpeg" alt="FixMyCity Logo" style="width:40px;height:40px;object-fit:contain;">
+</span>        <span><span>FixMyCity</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/citizen/portal">File Complaint</a>
+        <a href="/citizen/my-complaints" class="active">My History</a>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="history-container">
+    <div class="mb-3">
+      <h1> My Complaint History</h1>
+      <p class="text-secondary">Track the status of your reported grievances</p>
+    </div>
+
+    <div id="complaintsList">
+      <div class="text-center p-3">Loading your history...</div>
+    </div>
+  </div>
+
+  <div id="feedbackModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(4px); z-index:1000; align-items:center; justify-content:center; padding:1rem;">
+    <div class="card" style="width:100%; max-width:400px; position:relative;">
+      <h3 class="mb-3">Rate the Resolution</h3>
+      <div class="form-group">
+        <label class="form-label">How satisfied are you?</label>
+        <div style="display:flex; gap:10px; font-size:1.5rem; color:var(--text-secondary);">
+          <span class="star" onclick="selectStar(1)" style="cursor:pointer;">★</span>
+          <span class="star" onclick="selectStar(2)" style="cursor:pointer;">★</span>
+          <span class="star" onclick="selectStar(3)" style="cursor:pointer;">★</span>
+          <span class="star" onclick="selectStar(4)" style="cursor:pointer;">★</span>
+          <span class="star" onclick="selectStar(5)" style="cursor:pointer;">★</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your comments (optional)</label>
+        <textarea id="feedbackComment" class="form-control" placeholder="Tell us more about the service..."></textarea>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeFeedbackModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/shared/auth.js"></script>
+  <script src="my-complaints.js"></script>
+</body>
+</html>

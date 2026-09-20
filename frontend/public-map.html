@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Complaint Map — City Transparency</title>
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #publicMap { height: calc(100vh - 64px); width: 100%; }
+    .legend {
+      position: absolute; bottom: 30px; right: 30px; z-index: 1000;
+      background: rgba(255, 255, 255, 0.95); border: 1px solid var(--border);
+      padding: 15px; border-radius: 12px; backdrop-filter: blur(10px);
+      color: var(--text-primary); box-shadow: var(--shadow);
+    }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin-bottom: 5px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .marker-popup { color: #000; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-icon"><img src="/pho/logo.jpeg" style="width:40px;height:40px;object-fit:contain;"></span>
+        <span>FixMyCity <span>Public Map</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/citizen/login">Submit Complaint</a>
+        <a href="/citizen/portal">Citizen Portal</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="publicMap"></div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:#ef4444"></span> Pending</div>
+    <div class="legend-item"><span class="dot" style="background:#3b82f6"></span> In Progress</div>
+    <div class="legend-item"><span class="dot" style="background:#10b981"></span> Resolved</div>
+    <div class="legend-item" style="margin-top:10px; font-size:0.75rem; color:var(--text-secondary)">Total issues: <span id="totalMarkers" class="text-accent">0</span></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    let map;
+    const defaultCoords = [28.6139, 77.2090]; // Delhi
+
+    function initMap() {
+      map = L.map('publicMap').setView(defaultCoords, 11);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      loadMarkers();
+    }
+
+    async function loadMarkers() {
+      const res = await fetch('/api/complaints/public/map');
+      const { complaints } = await res.json();
+      
+      document.getElementById('totalMarkers').textContent = complaints.length;
+
+      complaints.forEach(c => {
+        if (!c.lat || !c.lng) return;
+
+        let color = '#ef4444'; // Pending
+        if (c.status === 'In Progress') color = '#3b82f6';
+        if (c.status === 'Resolved') color = '#10b981';
+
+        const marker = L.circleMarker([c.lat, c.lng], {
+          radius: 8,
+          fillColor: color,
+          color: "#fff",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).addTo(map);
+
+        marker.bindPopup(`
+          <div style="font-family:'Inter',sans-serif">
+            <b style="color:var(--accent)">${c.complaint_id}</b><br>
+            <div style="margin:5px 0"><b>Status:</b> ${c.status}</div>
+            <div style="font-size:0.85rem">${c.description.substring(0, 100)}...</div>
+            <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center">
+               <span style="font-size:0.75rem">👤 Supports: ${c.support_count || 0}</span>
+               <a href="/citizen/login" style="color:var(--accent); font-size:0.75rem; font-weight:700">Support This →</a>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    initMap();
+  </script>
+</body>
+</html>

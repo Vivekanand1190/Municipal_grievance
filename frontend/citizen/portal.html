@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Citizen Portal — FixMyCity</title>
+  <link rel="stylesheet" href="/shared/style.css" />
+  <link rel="stylesheet" href="portal.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="/citizen/portal" class="nav-brand">
+<span class="nav-icon">
+  <img src="/pho/logo.jpeg" alt="FixMyCity Logo" style="width:40px;height:40px;object-fit:contain;">
+</span>          <span> <span>FixMyCity</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/citizen/portal" class="active">File Complaint</a>
+        <a href="/citizen/my-complaints">My History</a>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="portal-container">
+    <div class="user-bar">
+      <div>
+        Welcome, <span id="userName" class="text-accent font-bold">...</span>
+      </div>
+      <div class="text-secondary text-sm">Citizen Portal</div>
+    </div>
+
+    <!-- Citizen Stats -->
+    <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div class="stat-card" style="padding: 1rem">
+        <div class="stat-label">My Total</div>
+        <div class="stat-value" id="countTotal" style="font-size: 1.5rem">0</div>
+      </div>
+      <div class="stat-card" style="padding: 1rem;">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="countPending" style="font-size: 1.5rem; color: var(--status-pending)">0</div>
+      </div>
+      <div class="stat-card" style="padding: 1rem;">
+        <div class="stat-label">Resolved</div>
+        <div class="stat-value" id="countResolved" style="font-size: 1.5rem; color: var(--status-resolved)">0</div>
+      </div>
+      <div class="stat-card" style="padding: 1rem;">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value" id="countRejected" style="font-size: 1.5rem; color: var(--status-rejected)">0</div>
+      </div>
+    </div>
+
+    <div class="portal-grid">
+      <!-- Left: Form -->
+      <div class="card">
+        <h2 class="mb-3">File a New Complaint</h2>
+        <form id="complaintForm">
+          <div class="form-group">
+            <label class="form-label">Complaint Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              placeholder="Describe the issue in detail..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"
+              >Category (AI will auto-improve this)</label
+            >
+            <select id="categoryHint" class="form-control">
+              <option value="">Auto-detect category</option>
+              <option value="Road & Infrastructure Department">Road & Infrastructure Department</option>
+              <option value="Water Supply Department">Water Supply Department</option>
+              <option value="Electricity Department">Electricity Department</option>
+              <option value="Sanitation & Waste Management">Sanitation & Waste Management</option>
+              <option value="Public Health Department">Public Health Department</option>
+              <option value="Transport Department">Transport Department</option>
+              <option value="Municipal Services">Municipal Services</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"
+              >Attach Photo (AI identifies location via GPS if
+              available)</label
+            >
+            <div class="upload-area" id="dropZone">
+              <span id="uploadHint"
+                >Click or Drag Photo Here<br /><small
+                  >Supports JPG, PNG, WEBP (Max 5MB)</small
+                ></span
+              >
+              <div class="upload-preview" id="previewBox">
+                <img id="previewImg" src="" />
+                <button
+                  type="button"
+                  class="remove-photo"
+                  onclick="clearPhoto(event)"
+                >
+                  X
+                </button>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="photoInput"
+              accept="image/*"
+              style="display: none"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full" id="submitBtn">
+            Submit Grievance
+          </button>
+        </form>
+      </div>
+
+      <!-- Right: Location -->
+      <div class="card">
+        <h3 style="font-size: 1.1rem"> Location Details</h3>
+        <p class="text-secondary text-sm mt-1">
+          If your photo has GPS tags, the pin will move automatically. You can
+          also drag the pin or click the map manually.
+        </p>
+
+        <div id="map"></div>
+        <input type="hidden" id="lat" />
+        <input type="hidden" id="lng" />
+
+        <div class="form-group mt-3">
+          <label class="form-label">Landmark / Address (Optional)</label>
+          <input
+            type="text"
+            id="locationText"
+            class="form-control"
+            placeholder="e.g. Near Metro Pillar 45"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="/shared/auth.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.cjs"></script>
+  <script src="portal.js"></script>
+
+  <!-- Duplicate Warning Modal -->
+  <div id="duplicateModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center; padding:1.5rem;">
+    <div class="card" style="width:100%; max-width:500px; border-top: 4px solid var(--accent)">
+      <h2 style="color:var(--accent); font-size:1.4rem" class="mb-3">Similar Complaint Nearby</h2>
+      <p class="text-secondary mb-3">Another citizen has already reported a similar issue in this area. Would you like to support their complaint instead of creating a new one?</p>
+      
+      <div style="background:var(--bg-secondary); border:1px solid var(--border); border-radius:8px; padding:15px; margin-bottom:20px;">
+        <div class="text-accent font-bold mb-2" id="duplicateId">FMC-XXXX</div>
+        <div id="duplicateDesc" class="text-sm">Complaint description goes here...</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <button class="btn btn-primary" onclick="supportExisting()">Support This Complaint instead</button>
+        <div style="display:flex; gap:10px;">
+           <button class="btn btn-secondary flex-1" onclick="submitGrievance()">File Anyway</button>
+           <button class="btn btn-ghost" style="border:none" onclick="closeDuplicateModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </body>
+</html>
