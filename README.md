@@ -22,7 +22,7 @@ FixMyCity is a full-stack, AI-powered municipal grievance management system that
 - **Analytics dashboard** with high-quality Matplotlib charts — daily complaint volume, department-wise distribution, status breakdown, and zone analysis
 - **Citizen feedback** on resolved complaints
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
